@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -34,6 +35,7 @@ public class User implements Serializable {
 	private Date birthdate;
 	
 	@NotNull
+	@OneToMany // TODO: is more needed?
 	private List<Card> cards = new ArrayList<Card>();
 
 	public Long getId() {
