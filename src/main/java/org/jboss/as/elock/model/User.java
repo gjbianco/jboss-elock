@@ -1,4 +1,4 @@
-package org.jboss.as.elock.hibernate4.model;
+package org.jboss.as.elock.model;
 
 import java.io.Serializable;
 import java.sql.Date;
