@@ -11,8 +11,9 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Entity implementation class for Entity: Door
+ * Represents the concept of a door. Doors have their own individual required permission level that must be met in order for the user to be given access.
  *
+ * @author Guy J. Bianco IV
  */
 @Entity
 @XmlRootElement
