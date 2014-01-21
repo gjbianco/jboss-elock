@@ -1,6 +1,7 @@
 package org.jboss.as.elock.webservice;
 
 /**
+ * CDI service which responds with whether or not a user has permission to unlock a door.
  * 
  * @author Guy J. Bianco IV
  *
