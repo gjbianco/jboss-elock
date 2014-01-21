@@ -27,8 +27,8 @@ public class Door implements Serializable {
 	private long id;
 	
 	@NotNull
-	@Column(name = "req_perm")
-	private int reqPerm = 0;
+	@Column(name = "required_perm")
+	private int requiredPerm = 0;
 
 	public long getId() {
 		return this.id;
@@ -36,11 +36,11 @@ public class Door implements Serializable {
 	public void setId(long id) {
 		this.id = id;
 	}   
-	public int getReqPerm() {
-		return this.reqPerm;
+	public int getRequiredPerm() {
+		return this.requiredPerm;
 	}
-	public void setReqPerm(int reqPerm) {
-		this.reqPerm = reqPerm;
+	public void setRequiredPerm(int requiredPerm) {
+		this.requiredPerm = requiredPerm;
 	}
    
 }
