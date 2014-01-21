@@ -27,7 +27,7 @@ public class Card implements Serializable {
 	
 	@NotNull
 	@Column(name = "perm_level")
-	private int permLevel;
+	private int permLevel = 0;
 	
 	public Long getId() {
 		return id;
