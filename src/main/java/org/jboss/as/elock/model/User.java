@@ -2,7 +2,8 @@ package org.jboss.as.elock.model;
 
 import java.io.Serializable;
 import java.sql.Date;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,7 +34,7 @@ public class User implements Serializable {
 	private Date birthdate;
 	
 	@NotNull
-	private HashSet<Card> cards;
+	private List<Card> cards = new ArrayList<Card>();
 
 	public Long getId() {
 		return id;
