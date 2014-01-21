@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -29,13 +30,15 @@ public class User implements Serializable {
 	@NotNull
 	@Size(min = 1, max = 25)
 	@Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
+	@Column(name = "user_name")
 	private String name;
 	
 	@NotNull
+	@Column(name = "user_birthdate")
 	private Date birthdate;
 	
 	@NotNull
-	@OneToMany // TODO: is more needed?
+	@OneToMany
 	private List<Card> cards = new ArrayList<Card>();
 
 	public Long getId() {

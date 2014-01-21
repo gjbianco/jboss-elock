@@ -7,6 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -23,11 +25,16 @@ public class Card implements Serializable {
 	private Long id;
 	
 	@NotNull
+	@Column(name = "card_expiration")
 	private Date expiration;
 	
 	@NotNull
-	@Column(name = "perm_level")
+	@Column(name = "card_perm_level")
 	private int permLevel = 0;
+	
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User user;
 	
 	public Long getId() {
 		return id;
