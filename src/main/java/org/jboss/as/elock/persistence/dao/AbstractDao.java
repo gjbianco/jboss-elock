@@ -30,6 +30,12 @@ public abstract class AbstractDao<T> implements Dao<T> {
 		Object ref = this.entityManager.getReference(type, id);
 		this.entityManager.remove(ref);
 	}
+	
+	@Override
+	public T update(T t) {
+		entityManager.merge(t);
+		return t;
+	}
 
 	@Override
 	@SuppressWarnings("unchecked")

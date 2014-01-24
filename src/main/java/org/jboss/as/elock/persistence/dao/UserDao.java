@@ -10,7 +10,7 @@ import org.jboss.as.elock.model.User;
 public class UserDao extends AbstractDao<User> {
 
 	@SuppressWarnings("unchecked")
-	public List<Card> getCards(User user) {
+	public List<Card> findCardsByUser(User user) {
 		if(user == null)
 			return null;
 
@@ -19,11 +19,5 @@ public class UserDao extends AbstractDao<User> {
 		Query query = entityManager.createQuery(hql);
 		query.setParameter("user", user);
 		return (List<Card>) query.getResultList();
-	}
-
-	@Override
-	public User update(User t) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
