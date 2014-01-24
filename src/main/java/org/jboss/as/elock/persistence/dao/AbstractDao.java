@@ -42,8 +42,6 @@ public abstract class AbstractDao<T> implements Dao<T> {
 	public List<T> findAll(Class<T> type, int start, int quantity) {
 		Query query = entityManager.createQuery("FROM" + type.getName());
 		setItemsReturned(query, start, quantity);
-		List<T> toReturn = query.getResultList();
-		Collections.sort(toReturn, new EntityComparator());
-		return toReturn;
+		return query.getResultList();
 	}
 }
