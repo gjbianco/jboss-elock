@@ -1,6 +1,5 @@
 package org.jboss.as.elock.persistence.dao;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -39,9 +38,8 @@ public abstract class AbstractDao<T> implements Dao<T> {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<T> findAll(Class<T> type, int start, int quantity) {
+	public List<T> findAll(Class<T> type) {
 		Query query = entityManager.createQuery("FROM" + type.getName());
-		setItemsReturned(query, start, quantity);
 		return query.getResultList();
 	}
 }

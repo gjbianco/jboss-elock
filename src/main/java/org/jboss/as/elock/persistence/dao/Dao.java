@@ -46,5 +46,5 @@ public interface Dao<T> {
 	 * @param quantity - the number of items to return. If this is equal to 0, returns all items.
 	 * @return A List<T> containing a number of elements determined by the quantity field.
 	 */
-	public List<T> findAll(Class<T> type, int startIndex, int quantity);
+	public List<T> findAll(Class<T> type);
 }
