@@ -32,15 +32,15 @@
     </persistence-unit>
 
     <!-- Main PU -->
-    <!-- <persistence-unit name="primary" transaction-type="jta"> -->
-        <!-- <provider>org.hibernate.ejb.hibernatepersistence</provider> -->
-        <!-- <jta-data-source>java:jboss/datasources/jboss-elockDS</jta-data-source> -->
-        <!-- <properties> -->
-            <!-- properties for hibernate -->
-            <!-- <property name="hibernate.dialect" value="org.hibernate.dialect.mysql5dialect" /> -->
-            <!-- <property name="hibernate.hbm2ddl.auto" value="create" /> -->
-            <!-- <property name="hibernate.show_sql" value="false" /> -->
-        <!-- </properties> -->
-    <!-- </persistence-unit> -->
+    <!-- <persistence-unit name="primary" transaction-type="jta">
+        <provider>org.hibernate.ejb.hibernatepersistence</provider>
+        <jta-data-source>java:jboss/datasources/jboss-elockDS</jta-data-source>
+        <properties>
+            properties for hibernate
+            <property name="hibernate.dialect" value="org.hibernate.dialect.mysql5dialect" />
+            <property name="hibernate.hbm2ddl.auto" value="create" />
+            <property name="hibernate.show_sql" value="false" />
+        </properties>
+    </persistence-unit> -->
 
 </persistence>
