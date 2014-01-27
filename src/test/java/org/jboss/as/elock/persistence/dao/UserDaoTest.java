@@ -1,7 +1,5 @@
 package org.jboss.as.elock.persistence.dao;
 
-import static org.junit.Assert.*;
-
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -10,29 +8,26 @@ import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import junit.framework.TestCase;
+
 import org.jboss.as.elock.model.Card;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class UserDaoTest {
+public class UserDaoTest extends TestCase {
 	
-	@PersistenceContext(unitName = "userTest")
+	@PersistenceContext(unitName = "elockTest")
 	EntityManager testEntityManager;
 	
 	EntityManagerFactory factory;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		factory = Persistence.createEntityManagerFactory("elockTest");
 		testEntityManager = factory.createEntityManager();
 	}
 
-	@After
-	public void tearDown() throws Exception {
-	}
-
-	@Test
+/*	@Test
 	public void testCreate() {
 		//Query query = testEntityManager.createNamedQuery(name)
 	}
@@ -50,7 +45,7 @@ public class UserDaoTest {
 	@Test
 	public void testUpdate() {
 		fail("Not yet implemented");
-	}
+	}*/
 
 	@Test
 	public void testFindAll() {
