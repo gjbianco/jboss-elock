@@ -10,8 +10,6 @@ import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import junit.framework.Assert;
-
 import org.jboss.as.elock.model.Card;
 import org.junit.After;
 import org.junit.Before;
@@ -26,7 +24,7 @@ public class UserDaoTest {
 
 	@Before
 	public void setUp() throws Exception {
-		factory = Persistence.createEntityManagerFactory("userTest");
+		factory = Persistence.createEntityManagerFactory("elockTest");
 		testEntityManager = factory.createEntityManager();
 	}
 
