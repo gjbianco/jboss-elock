@@ -3,7 +3,6 @@ package org.jboss.as.elock.persistence.dao;
 import junit.framework.TestCase;
 
 import org.junit.Before;
-import org.junit.Test;
 
 public class DoorDaoTest extends TestCase {
 
@@ -34,5 +33,5 @@ public class DoorDaoTest extends TestCase {
 	@Test
 	public void testFindAll() {
 		fail("Not yet implemented");
-	}*/
+    }*/
 }

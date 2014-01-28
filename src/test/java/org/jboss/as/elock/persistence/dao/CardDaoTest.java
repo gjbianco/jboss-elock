@@ -2,16 +2,13 @@ package org.jboss.as.elock.persistence.dao;
 
 import junit.framework.TestCase;
 
-import org.junit.Before;
-import org.junit.Test;
-
 public class CardDaoTest extends TestCase {
 
-	@Before
+/*	@Before
 	public void setUp() throws Exception {
 	}
 
-/*	@Test
+	@Test
 	public void testCreate() {
 		fail("Not yet implemented");
 	}
