@@ -1,7 +1,7 @@
 package org.jboss.as.elock.model;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -20,6 +22,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @XmlRootElement
 @Table
+@NamedQueries({
+	@NamedQuery(name = "findUserById", query = "FROM User u WHERE u.id = :id")
+})
 public class User implements Serializable {
 
 	private static final long serialVersionUID = -5666950700144552087L;
@@ -62,7 +67,7 @@ public class User implements Serializable {
 		return birthdate;
 	}
 
-	public void setBirthdate(Date birthdate) {
-		this.birthdate = birthdate;
+	public void setBirthdate(Date date) {
+		this.birthdate = date;
 	}
 }

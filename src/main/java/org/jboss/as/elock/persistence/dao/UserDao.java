@@ -20,4 +20,8 @@ public class UserDao extends AbstractDao<User> {
 		query.setParameter("user", user);
 		return (List<Card>) query.getResultList();
 	}
+	
+	public User findUserById(Long id) {
+		return (User) entityManager.createNamedQuery("findUserById").setParameter("id", id).getSingleResult();
+	}
 }
