@@ -10,23 +10,25 @@
         http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
 
     <!-- Testing only! -->
-    <persistence-unit name="elockTest" transaction-type="RESOURCE_LOCAL">
+<!--     <persistence-unit name="elockTest" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
-        <properties>
-            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />
-            <property name="hibernate.show_sql" value="false" />
-        </properties>
-    </persistence-unit>
-
-    <!-- Main PU -->
-    <!-- <persistence-unit name="primary" transaction-type="JTA">
-        <provider>org.hibernate.ejb.hibernatepersistence</provider>
         <jta-data-source>java:jboss/datasources/jboss-elockDS</jta-data-source>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.mysql5dialect" />
             <property name="hibernate.hbm2ddl.auto" value="create" />
             <property name="hibernate.show_sql" value="false" />
         </properties>
-    </persistence-unit> -->
+    </persistence-unit>
+ -->
+    <!-- Main PU -->
+    <persistence-unit name="primary" transaction-type="JTA">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <jta-data-source>java:jboss/datasources/jboss-elockDS</jta-data-source>
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />
+            <property name="hibernate.hbm2ddl.auto" value="create" />
+            <property name="hibernate.show_sql" value="false" />
+        </properties>
+    </persistence-unit>
 
 </persistence>
