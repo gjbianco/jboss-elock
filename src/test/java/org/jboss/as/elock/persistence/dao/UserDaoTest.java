@@ -44,7 +44,7 @@ public class UserDaoTest extends TestCase {
 		assertEquals(user.getId(), expected.getId());
 	}
 
-	@Test
+/*	@Test
 	public void testFindById() {
 		
 		// get the expected result
@@ -61,7 +61,7 @@ public class UserDaoTest extends TestCase {
 		User actual = userDao.findById(user.getId(), User.class);
 		
 		assertEquals(expected.getId(), actual.getId());
-	}
+	}*/
 
 	/*@Test
 	public void testDelete() {
@@ -73,17 +73,16 @@ public class UserDaoTest extends TestCase {
 		fail("Not yet implemented");
 	}*/
 
-	@Test
+/*	@Test
 	public void testFindAll() {
 		Query cardQuery = testEntityManager.createNamedQuery("findAll");
 		List<Card> cardList = cardQuery.getResultList();
 		List<Card> list = testEntityManager.createQuery("FROM User").getResultList();
 		assertEquals(cardList.size(), list.size());
-	}
+	}*/
 
 	private User setUpUserObject() {
 		User testUser = new User();
-		testUser.setId(1L);
 		testUser.setName("Jim Bob");
 		testUser.setBirthdate(new Date());
 		
