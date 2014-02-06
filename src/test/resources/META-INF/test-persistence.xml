@@ -23,7 +23,7 @@
 
     <!-- Testing only! -->
     <persistence-unit name="elockTest" transaction-type="RESOURCE_LOCAL">
-        <provider>org.hibernate.HibernatePersistence</provider>
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <jta-data-source>java:jboss/datasources/jboss-elockDS</jta-data-source>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />
