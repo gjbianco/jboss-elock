@@ -39,7 +39,7 @@ public abstract class AbstractDao<T> implements Dao<T> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<T> findAll(Class<T> type) {
-		Query query = entityManager.createQuery("FROM" + type.getName());
+		Query query = entityManager.createQuery("FROM " + type.getName());
 		return query.getResultList();
 	}
 
