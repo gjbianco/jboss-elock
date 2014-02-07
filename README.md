@@ -1,7 +1,7 @@
 jboss-elock: Web Service Permission-based Door Locking
 ========================
 Author: Guy Bianco
-Technologies: CDI, JSF, JPA, EJB, JPA, JAX-RS, BV
+Technologies: CDI, JPA, EJB, JAX-RS, Arquillian, Hibernate
 Target Product: EAP
 
 What is it?
@@ -22,55 +22,17 @@ Permissions:
   3 - maintenance
   4 - admin
 
-System requirements
--------------------
-
-All you need to build this project is Java 6.0 (Java SDK 1.6) or better, Maven 3.0 or better.
-
-The application this project produces is designed to be run on JBoss Enterprise Application Platform 6 or JBoss AS 7. 
-
-
-Start JBoss Enterprise Application Platform 6 or JBoss AS 7 with the Web Profile
--------------------------
-
-1. Open a command line and navigate to the root of the JBoss server directory.
-2. The following shows the command line to start the server with the web profile:
-
-        For Linux:   JBOSS_HOME/bin/standalone.sh
-        For Windows: JBOSS_HOME\bin\standalone.bat
-
- 
-Build and Deploy
--------------------------
-
-1. Make sure you have started the JBoss Server as described above.
-2. Open a command line and navigate to the root directory of this quickstart.
-3. Type this command to build and deploy the archive:
-
-        mvn clean package jboss-as:deploy
-
-4. This will deploy `target/jboss-sandbox.war` to the running instance of the server.
- 
-
-Access the application 
----------------------
-
-The application will be running at the following URL: <http://localhost:8080/jboss-elock/>.
-
-
-Undeploy the Archive
---------------------
-
-1. Make sure you have started the JBoss Server as described above.
-2. Open a command line and navigate to the root directory of this quickstart.
-3. When you are finished testing, type this command to undeploy the archive:
-
-        mvn jboss-as:undeploy
-
-Debug the Application
+Testing the Application
 ------------------------------------
 
-If you want to debug the source code or look at the Javadocs of any library in the project, run either of the following commands to pull them into your local repository. The IDE should then detect them.
+Tests are implemented in Arquillian.
 
-    mvn dependency:sources
-    mvn dependency:resolve -Dclassifier=javadoc
+You can run the tests using Eclipse or by calling Maven directly. Suggested command:
+
+`mvn test -Parquillian-jbossas-remote -Dtest=[test-name]`
+
+Current potential test names:
+
+ * UserDaoTest
+ * CardDaoTest
+ * DoorDaoTest
