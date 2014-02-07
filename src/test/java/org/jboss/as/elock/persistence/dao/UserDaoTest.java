@@ -49,7 +49,6 @@ public class UserDaoTest extends TestCase {
 	public void prepareTest() throws Exception {
 		userDao.setEntityManager(em);
 		clearData();
-		insertData();
 		startTransaction();
 	}
 	
@@ -63,20 +62,6 @@ public class UserDaoTest extends TestCase {
 		em.joinTransaction();
 		em.createQuery("delete from User").executeUpdate();
 		utx.commit();
-	}
-	
-	private void insertData() throws Exception {
-		utx.begin();
-		em.joinTransaction();
-
-		// actually insert data
-		for(int i = 0; i < 10; i++) {
-			User user = setUpUserObject();
-			userDao.create(user);
-		}
-
-		utx.commit();
-		em.clear();
 	}
 	
 	private void startTransaction() throws Exception {
@@ -134,7 +119,7 @@ public class UserDaoTest extends TestCase {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testFindAll() {
-		List<User> actual = userDao.findAll(User.class);
+		List<User> actual = userDao.findAll(User.class); // problematic
 		List<User> expected = em.createNamedQuery("findAll").getResultList();
 		assertEquals(expected.size(), actual.size());
 	}
