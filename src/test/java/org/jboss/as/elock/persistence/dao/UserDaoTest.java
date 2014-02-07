@@ -113,10 +113,15 @@ public class UserDaoTest extends TestCase {
 		assertEquals(userDao.findById(user.getId(), User.class), null);
 	}
 
-/*	@Test
+	@Test
 	public void testUpdate() {
-		fail("Not yet implemented");
-	}*/
+		User user = setUpUserObject();
+		user.setName("Original Name");
+		userDao.create(user);
+		user.setName("Modified Name");
+		userDao.update(user);
+		assertEquals(userDao.findById(user.getId(), User.class).getName(), user.getName());
+	}
 
 	@Test
 	@SuppressWarnings("unchecked")
