@@ -1,6 +1,7 @@
 package org.jboss.as.elock.persistence.dao;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -67,7 +68,13 @@ public class UserDaoTest extends TestCase {
 	private void insertData() throws Exception {
 		utx.begin();
 		em.joinTransaction();
-		// insert data
+
+		// actually insert data
+		for(int i = 0; i < 10; i++) {
+			User user = setUpUserObject();
+			userDao.create(user);
+		}
+
 		utx.commit();
 		em.clear();
 	}
@@ -81,7 +88,6 @@ public class UserDaoTest extends TestCase {
 		User testUser = new User();
 		testUser.setName("Jim Bob");
 		testUser.setBirthdate(new Date());
-		
 		return testUser;
 	}
 	
@@ -90,34 +96,20 @@ public class UserDaoTest extends TestCase {
 	@Test
 	public void testCreate() throws Exception {
 		User user = setUpUserObject();
-//		UserDao userDao = new UserDao();
-//		userDao.setEntityManager(em);
-		
 		userDao.create(user);
-
 		User expected = (User) em.createNamedQuery("findUserById").setParameter("id", user.getId()).getSingleResult();
-		
 		assertEquals(user.getId(), expected.getId());
 	}
 
-/*	@Test
+	@Test
 	public void testFindById() {
 		
-		// get the expected result
-		// Query query = em.createNamedQuery("findUserById", User.class);
 		User user = setUpUserObject();
-		User expected = (User) em.createNamedQuery("findUserById").setParameter("id", user.getId()).getSingleResult();
-		// User expected = (User) query.getResultList().get(0);
-		
-		
-		// get the actual result
-		UserDao userDao = new UserDao();
-		userDao.setEntityManager(em);
-		em.getTransaction().begin();
+		userDao.create(user);
+		User expected = em.createNamedQuery("findUserById", User.class).setParameter("id", user.getId()).getSingleResult();
 		User actual = userDao.findById(user.getId(), User.class);
-		
 		assertEquals(expected.getId(), actual.getId());
-	}*/
+	}
 
 /*	@Test
 	public void testDelete() {
@@ -129,12 +121,11 @@ public class UserDaoTest extends TestCase {
 		fail("Not yet implemented");
 	}*/
 
-/*	@Test
+	@Test
 	@SuppressWarnings("unchecked")
 	public void testFindAll() {
-		Query cardQuery = em.createNamedQuery("findAll");
-		List<Card> cardList = cardQuery.getResultList();
-		List<Card> list = em.createQuery("FROM User").getResultList();
-		assertEquals(cardList.size(), list.size());
-	}*/
+		List<User> actual = userDao.findAll(User.class);
+		List<User> expected = em.createNamedQuery("findAll").getResultList();
+		assertEquals(expected.size(), actual.size());
+	}
 }
