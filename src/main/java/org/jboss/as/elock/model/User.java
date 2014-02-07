@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table
 @NamedQueries({
 	@NamedQuery(name = "findUserById", query = "FROM User u WHERE u.id = :id"),
-	@NamedQuery(name = "findAll", query = "FROM User"),
+	@NamedQuery(name = "findAllUsers", query = "FROM User"),
 })
 public class User implements Serializable {
 
@@ -47,6 +47,49 @@ public class User implements Serializable {
 	@NotNull
 	@OneToMany(fetch = FetchType.EAGER)
 	private List<Card> cards = new ArrayList<Card>();
+	
+	/**
+	 * Add a card to the User's list of Cards.
+	 * @param card
+	 * @return
+	 */
+	public Card addCard(Card card) {
+		cards.add(card);
+		return card;
+	}
+	
+	/**
+	 * Remove the identified Card object from the User's list of cards.
+	 * @param id
+	 * @return
+	 */
+	public Card removeCardById(Long id) {
+		int foundIndex = findCardIndex(id);
+		Card foundCard = cards.get(foundIndex);
+		cards.remove(foundIndex);
+		return foundCard;
+	}
+	
+	private int findCardIndex(Long id) {
+		for(Card c : cards) {
+			if(id == c.getId())
+				return cards.indexOf(c);
+		}
+		return -1;
+	}
+	
+	/**
+	 * 
+	 * @param card - Card object to search for (by ID) in the User's list of cards.
+	 * @return ID of the found card, or null if not found.
+	 */
+	public Card findCard(Long id) {
+		for(Card c : cards) {
+			if(id == c.getId())
+				return c;
+		}
+		return null;
+	}
 
 	public Long getId() {
 		return id;

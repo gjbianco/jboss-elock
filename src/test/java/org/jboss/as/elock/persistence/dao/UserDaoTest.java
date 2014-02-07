@@ -126,8 +126,14 @@ public class UserDaoTest extends TestCase {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testFindAll() {
-		List<User> actual = userDao.findAll(User.class); // problematic
-		List<User> expected = em.createNamedQuery("findAll").getResultList();
+		List<User> actual = userDao.findAll(User.class);
+		List<User> expected = em.createNamedQuery("findAllUsers").getResultList();
 		assertEquals(expected.size(), actual.size());
 	}
+	
+/*	@Test
+	public void testFindCardsByUser(Long id) {
+		User user = setUpUserObject();
+		
+	}*/
 }
