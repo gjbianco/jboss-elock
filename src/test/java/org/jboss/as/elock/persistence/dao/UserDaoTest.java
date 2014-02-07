@@ -98,18 +98,20 @@ public class UserDaoTest extends TestCase {
 
 	@Test
 	public void testFindById() {
-		
 		User user = setUpUserObject();
 		userDao.create(user);
-		User expected = em.createNamedQuery("findUserById", User.class).setParameter("id", user.getId()).getSingleResult();
+//		User expected = em.createNamedQuery("findUserById", User.class).setParameter("id", user.getId()).getSingleResult();
 		User actual = userDao.findById(user.getId(), User.class);
-		assertEquals(expected.getId(), actual.getId());
+		assertEquals(user.getId(), actual.getId());
 	}
 
-/*	@Test
+	@Test
 	public void testDelete() {
-		fail("Not yet implemented");
-	}*/
+		User user = setUpUserObject();
+		userDao.create(user);
+		userDao.delete(user.getId(), User.class);
+		assertEquals(userDao.findById(user.getId(), User.class), null);
+	}
 
 /*	@Test
 	public void testUpdate() {
