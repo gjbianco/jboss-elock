@@ -96,8 +96,18 @@ public class UserDaoTest extends TestCase {
 	@Test
 	public void testCreate() throws Exception {
 		User user = setUpUserObject();
+
+		User expected;
+		try {
+			expected = (User) em.createNamedQuery("findUserById").setParameter("id", user.getId()).getSingleResult();
+			fail("Should not find user before we create it.");
+		} catch(javax.persistence.NoResultException e) {
+			// correct
+		}
+
 		userDao.create(user);
-		User expected = (User) em.createNamedQuery("findUserById").setParameter("id", user.getId()).getSingleResult();
+
+		expected = (User) em.createNamedQuery("findUserById").setParameter("id", user.getId()).getSingleResult();
 		assertEquals(user.getId(), expected.getId());
 	}
 
