@@ -70,7 +70,7 @@ public class DoorDaoTest extends TestCase {
 	
 	private Door setUpDoorObject() {
 		Door door = new Door();
-		door.setRequiredPerm(2);
+		door.setRequiredPermission(2);
 		return door;
 	}
 	
@@ -80,24 +80,16 @@ public class DoorDaoTest extends TestCase {
 	public void testCreate() {
 		Door door = setUpDoorObject();
 
-		Door expected;
-		try {
-			expected = (Door) em.createNamedQuery("findDoorById").setParameter("id", door.getId()).getSingleResult();
-			fail("Should not find door before we create it.");
-		} catch(javax.persistence.NoResultException e) {
-			// correct
-		}
-
 		doorDao.create(door);
-        expected = (Door) em.createNamedQuery("findDoorById").setParameter("id", door.getId()).getSingleResult();
-
+        Door expected = (Door) em.createQuery("FROM Door d WHERE d.id = :id").setParameter("id", door.getId()).getSingleResult();
+        assertNotNull(expected);
 		assertEquals(door.getId(), expected.getId());
 	}
 
 	@Test
 	public void testFindById() {
 		Door door = setUpDoorObject();
-		doorDao.create(door);
+		insertDoor(door);
 		Door actual = doorDao.findById(door.getId(), Door.class);
 		assertEquals(door.getId(), actual.getId());
 	}
@@ -105,7 +97,7 @@ public class DoorDaoTest extends TestCase {
 	@Test
 	public void testDelete() {
 		Door door = setUpDoorObject();
-		doorDao.create(door);
+		insertDoor(door);
 		doorDao.delete(door.getId(), Door.class);
 		assertEquals(doorDao.findById(door.getId(), Door.class), null);
 	}
@@ -113,18 +105,24 @@ public class DoorDaoTest extends TestCase {
 	@Test
 	public void testUpdate() {
 		Door door = setUpDoorObject();
-		door.setRequiredPerm(3);
-		doorDao.create(door);
-		door.setRequiredPerm(2);
+		door.setRequiredPermission(3);
+		insertDoor(door);
+		door.setRequiredPermission(2);
 		doorDao.update(door);
-		assertEquals(doorDao.findById(door.getId(), Door.class).getRequiredPerm(), door.getRequiredPerm());
+		assertEquals(doorDao.findById(door.getId(), Door.class).getRequiredPermission(), door.getRequiredPermission());
 	}
 
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testFindAll() {
 		List<Door> actual = doorDao.findAll(Door.class);
-		List<Door> expected = em.createNamedQuery("findAllDoors").getResultList();
+		List<Door> expected = em.createQuery("FROM Door").getResultList();
 		assertEquals(expected.size(), actual.size());
+	}
+	
+	private void insertDoor(Door door) {
+		em.persist(door);
+		em.flush();
+		em.refresh(door);
 	}
 }

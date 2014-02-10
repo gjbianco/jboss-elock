@@ -6,8 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -20,10 +18,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @XmlRootElement
 @Table
-@NamedQueries({
-	@NamedQuery(name = "findDoorById", query = "FROM Door d WHERE d.id = :id"),
-	@NamedQuery(name = "findAllDoors", query = "FROM Door")
-})
 public class Door implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -42,10 +36,10 @@ public class Door implements Serializable {
 	public void setId(long id) {
 		this.id = id;
 	}   
-	public int getRequiredPerm() {
+	public int getRequiredPermission() {
 		return this.requiredPerm;
 	}
-	public void setRequiredPerm(int requiredPerm) {
+	public void setRequiredPermission(int requiredPerm) {
 		this.requiredPerm = requiredPerm;
 	}
    

@@ -82,25 +82,17 @@ public class UserDaoTest extends TestCase {
 	public void testCreate() throws Exception {
 		User user = setUpUserObject();
 
-		User expected;
-		try {
-			expected = (User) em.createNamedQuery("findUserById").setParameter("id", user.getId()).getSingleResult();
-			fail("Should not find user before we create it.");
-		} catch(javax.persistence.NoResultException e) {
-			// correct
-		}
-
 		userDao.create(user);
 
-		expected = (User) em.createNamedQuery("findUserById").setParameter("id", user.getId()).getSingleResult();
-		assertEquals(user.getId(), expected.getId());
+		User expected = (User) em.createQuery("FROM User u WHERE u.id = :id").setParameter("id", user.getId()).getSingleResult();
+		assertNotNull(expected);
+		assertEquals(user, expected);
 	}
 
 	@Test
 	public void testFindById() {
 		User user = setUpUserObject();
-		userDao.create(user);
-//		User expected = em.createNamedQuery("findUserById", User.class).setParameter("id", user.getId()).getSingleResult();
+		insertUser(user);
 		User actual = userDao.findById(user.getId(), User.class);
 		assertEquals(user.getId(), actual.getId());
 	}
@@ -108,7 +100,7 @@ public class UserDaoTest extends TestCase {
 	@Test
 	public void testDelete() {
 		User user = setUpUserObject();
-		userDao.create(user);
+		insertUser(user);
 		userDao.delete(user.getId(), User.class);
 		assertEquals(userDao.findById(user.getId(), User.class), null);
 	}
@@ -117,7 +109,7 @@ public class UserDaoTest extends TestCase {
 	public void testUpdate() {
 		User user = setUpUserObject();
 		user.setName("Original Name");
-		userDao.create(user);
+		insertUser(user);
 		user.setName("Modified Name");
 		userDao.update(user);
 		assertEquals(userDao.findById(user.getId(), User.class).getName(), user.getName());
@@ -127,13 +119,13 @@ public class UserDaoTest extends TestCase {
 	@SuppressWarnings("unchecked")
 	public void testFindAll() {
 		List<User> actual = userDao.findAll(User.class);
-		List<User> expected = em.createNamedQuery("findAllUsers").getResultList();
+		List<User> expected = em.createQuery("FROM User").getResultList();
 		assertEquals(expected.size(), actual.size());
 	}
 	
-/*	@Test
-	public void testFindCardsByUser(Long id) {
-		User user = setUpUserObject();
-		
-	}*/
+	private void insertUser(User user) {
+		em.persist(user);
+		em.flush();
+		em.refresh(user);
+	}
 }

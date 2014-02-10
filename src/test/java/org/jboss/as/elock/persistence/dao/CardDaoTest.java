@@ -79,24 +79,18 @@ public class CardDaoTest extends TestCase {
 	public void testCreate() {
 		Card card = setUpCardObject();
 
-		Card expected;
-		try {
-			expected = (Card) em.createNamedQuery("findCardById").setParameter("id", card.getId()).getSingleResult();
-			fail("Should not find card before we create it.");
-		} catch(javax.persistence.NoResultException e) {
-			// correct
-		}
 
 		cardDao.create(card);
-        expected = (Card) em.createNamedQuery("findCardById").setParameter("id", card.getId()).getSingleResult();
 
+        Card expected = (Card) em.createQuery("FROM Card c WHERE c.id = :id").setParameter("id", card.getId()).getSingleResult();
+        assertNotNull(expected);
 		assertEquals(card.getId(), expected.getId());
 	}
 
 	@Test
 	public void testFindById() {
 		Card card = setUpCardObject();
-		cardDao.create(card);
+		insertCard(card);
 		Card actual = cardDao.findById(card.getId(), Card.class);
 		assertEquals(card.getId(), actual.getId());
 	}
@@ -104,7 +98,7 @@ public class CardDaoTest extends TestCase {
 	@Test
 	public void testDelete() {
 		Card card = setUpCardObject();
-		cardDao.create(card);
+		insertCard(card);
 		cardDao.delete(card.getId(), Card.class);
 		assertEquals(cardDao.findById(card.getId(), Card.class), null);
 	}
@@ -113,7 +107,7 @@ public class CardDaoTest extends TestCase {
 	public void testUpdate() {
 		Card card = setUpCardObject();
 		card.setPermissionLevel(3);
-		cardDao.create(card);
+		insertCard(card);
 		card.setPermissionLevel(2);
 		cardDao.update(card);
 		assertEquals(cardDao.findById(card.getId(), Card.class).getPermissionLevel(), card.getPermissionLevel());
@@ -123,7 +117,13 @@ public class CardDaoTest extends TestCase {
 	@SuppressWarnings("unchecked")
 	public void testFindAll() {
 		List<Card> actual = cardDao.findAll(Card.class);
-		List<Card> expected = em.createNamedQuery("findAllCards").getResultList();
+		List<Card> expected = em.createQuery("FROM Card").getResultList();
 		assertEquals(expected.size(), actual.size());
+	}
+	
+	private void insertCard(Card card) {
+		em.persist(card);
+		em.flush();
+		em.refresh(card);
 	}
 }
