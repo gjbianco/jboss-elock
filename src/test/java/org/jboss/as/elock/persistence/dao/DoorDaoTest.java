@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
 
@@ -26,7 +25,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
 public class DoorDaoTest extends TestCase {
-	
+
 	@Deployment
 	public static Archive<?> createDeployment() {
 		return ShrinkWrap.create(WebArchive.class, "test.war")
@@ -35,13 +34,13 @@ public class DoorDaoTest extends TestCase {
 				.addAsResource("META-INF/persistence.xml")
 				.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
-	
+
 	@PersistenceContext
 	EntityManager em;
-	
+
 	@Inject
 	DoorDao doorDao;
-	
+
 	@Inject
 	UserTransaction utx;
 
@@ -51,44 +50,34 @@ public class DoorDaoTest extends TestCase {
 		clearData();
 		startTransaction();
 	}
-	
+
 	@After
 	public void commitTransaction() throws Exception {
 		utx.commit();
 	}
-	
+
 	// setup helper functions -------------------------------------------------
-	
+
 	private void clearData() throws Exception {
 		utx.begin();
 		em.joinTransaction();
 		em.createQuery("delete from Door");
 		utx.commit();
 	}
-	
+
 	private void startTransaction() throws Exception {
 		utx.begin();
 		em.joinTransaction();
 	}
-	
+
 	private Door setUpDoorObject() {
 		Door door = new Door();
 		door.setRequiredPermission(2);
 		return door;
 	}
-	
+
 	// test helper functions --------------------------------------------------
 
-	private Door find(Long id) {
-		Door found;
-		try {
-			found = (Door) em.createQuery("FROM Door d WHERE d.id = :id").setParameter("id", id).getSingleResult();
-		} catch(NoResultException e) {
-			return null;
-		}
-        return found;
-	}
-	
 	private void insertDoor(Door door) {
 		em.persist(door);
 		em.flush();
@@ -103,7 +92,7 @@ public class DoorDaoTest extends TestCase {
 
 		doorDao.create(door);
 		Door expected = doorDao.findById(door.getId(), Door.class);
-        assertNotNull(expected);
+		assertNotNull(expected);
 		assertEquals(door, expected);
 	}
 
@@ -115,13 +104,16 @@ public class DoorDaoTest extends TestCase {
 		assertEquals(door, actual);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testDelete() {
 		Door door = setUpDoorObject();
 		insertDoor(door);
 		doorDao.delete(door.getId(), Door.class);
-		Door actual = find(door.getId());
-		assertEquals(actual, null);
+		List<Door> foundDoors = em.createQuery("FROM Door").getResultList();
+		for(Door found : foundDoors) {
+			assert(door.getId() != found.getId());
+		}
 	}
 
 	@Test
@@ -133,12 +125,14 @@ public class DoorDaoTest extends TestCase {
 
 		door.setRequiredPermission(original);
 		insertDoor(door);
-		Door actual = find(door.getId());
+		Door actual = (Door) em.createQuery("FROM Door d WHERE d.id = :id")
+				.setParameter("id", door.getId()).getSingleResult();
 		assertEquals(actual, door);
 
 		door.setRequiredPermission(updated);
 		doorDao.update(door);
-		actual = find(door.getId());
+		actual = (Door) em.createQuery("FROM Door d WHERE d.id = :id")
+				.setParameter("id", door.getId()).getSingleResult();
 		assertEquals(actual, door);
 	}
 
@@ -146,10 +140,10 @@ public class DoorDaoTest extends TestCase {
 	@SuppressWarnings("unchecked")
 	public void testFindAll() {
 		int amount = 10;
-		for(int i = 0; i < amount; i++) {
+		for (int i = 0; i < amount; i++) {
 			insertDoor(setUpDoorObject());
 		}
-		
+
 		List<Door> actual = doorDao.findAll(Door.class);
 		List<Door> expected = em.createQuery("FROM Door").getResultList();
 		assertEquals(expected.size(), amount);

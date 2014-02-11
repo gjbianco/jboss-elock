@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
 
@@ -27,7 +26,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
 public class UserDaoTest extends TestCase {
-	
+
 	@Deployment
 	public static Archive<?> createDeployment() {
 		return ShrinkWrap.create(WebArchive.class, "test.war")
@@ -39,10 +38,10 @@ public class UserDaoTest extends TestCase {
 
 	@PersistenceContext
 	EntityManager em;
-	
+
 	@Inject
 	UserDao userDao;
-	
+
 	@Inject
 	UserTransaction utx;
 
@@ -52,21 +51,21 @@ public class UserDaoTest extends TestCase {
 		clearData();
 		startTransaction();
 	}
-	
+
 	@After
 	public void commitTransaction() throws Exception {
 		utx.commit();
 	}
-	
+
 	// setup helper functions -------------------------------------------------
-	
+
 	private void clearData() throws Exception {
 		utx.begin();
 		em.joinTransaction();
 		em.createQuery("delete from User").executeUpdate();
 		utx.commit();
 	}
-	
+
 	private void startTransaction() throws Exception {
 		utx.begin();
 		em.joinTransaction();
@@ -78,19 +77,9 @@ public class UserDaoTest extends TestCase {
 		testUser.setBirthdate(new Date());
 		return testUser;
 	}
-	
+
 	// test helper functions --------------------------------------------------
 
-    private User find(Long id) {
-		User found;
-		try {
-			found = (User) em.createQuery("FROM User u WHERE u.id = :id").setParameter("id", id).getSingleResult();
-		} catch(NoResultException e) {
-			return null;
-		}
-		return found;
-	}
-	
 	private void insertUser(User user) {
 		em.persist(user);
 		em.flush();
@@ -105,7 +94,8 @@ public class UserDaoTest extends TestCase {
 
 		userDao.create(user);
 
-		User expected = find(user.getId());
+		User expected = (User) em.createQuery("FROM User u WHERE u.id = :id")
+				.setParameter("id", user.getId()).getSingleResult();
 		assertNotNull(expected);
 		assertEquals(user, expected);
 	}
@@ -118,30 +108,35 @@ public class UserDaoTest extends TestCase {
 		assertEquals(user.getId(), actual.getId());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testDelete() {
 		User user = setUpUserObject();
 		insertUser(user);
 		userDao.delete(user.getId(), User.class);
-		User actual = find(user.getId());
-		assertEquals(actual, null);
+		List<User> foundUsers = em.createQuery("FROM User").getResultList();
+		for(User found : foundUsers) {
+			assert(user.getId() != found.getId());
+		}
 	}
 
 	@Test
 	public void testUpdate() {
 		String original = "Original Name";
-		String updated  = "Updated Name";
+		String updated = "Updated Name";
 
 		User user = setUpUserObject();
 
 		user.setName(original);
 		insertUser(user);
-		User actual = find(user.getId());
+		User actual = (User) em.createQuery("FROM User u WHERE u.id = :id")
+				.setParameter("id", user.getId()).getSingleResult();
 		assertEquals(actual, user);
 
 		user.setName(updated);
 		userDao.update(user);
-		actual = find(user.getId());
+		actual = (User) em.createQuery("FROM User u WHERE u.id = :id")
+				.setParameter("id", user.getId()).getSingleResult();
 		assertEquals(actual, user);
 	}
 
@@ -149,7 +144,7 @@ public class UserDaoTest extends TestCase {
 	@SuppressWarnings("unchecked")
 	public void testFindAll() {
 		int amount = 10;
-		for(int i = 0; i < amount; i++) {
+		for (int i = 0; i < amount; i++) {
 			insertUser(setUpUserObject());
 		}
 

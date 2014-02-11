@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
 
@@ -27,7 +26,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
 public class CardDaoTest extends TestCase {
-	
+
 	@Deployment
 	public static Archive<?> createDeployment() {
 		return ShrinkWrap.create(WebArchive.class, "test.war")
@@ -36,13 +35,13 @@ public class CardDaoTest extends TestCase {
 				.addAsResource("META-INF/persistence.xml")
 				.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
-	
+
 	@PersistenceContext
 	EntityManager em;
-	
+
 	@Inject
 	CardDao cardDao;
-	
+
 	@Inject
 	UserTransaction utx;
 
@@ -52,21 +51,21 @@ public class CardDaoTest extends TestCase {
 		clearData();
 		startTransaction();
 	}
-	
+
 	@After
 	public void commitTransaction() throws Exception {
 		utx.commit();
 	}
-	
+
 	// setup helper functions -------------------------------------------------
-	
+
 	private void clearData() throws Exception {
 		utx.begin();
 		em.joinTransaction();
 		em.createQuery("delete from Card");
 		utx.commit();
 	}
-	
+
 	private void startTransaction() throws Exception {
 		utx.begin();
 		em.joinTransaction();
@@ -79,18 +78,7 @@ public class CardDaoTest extends TestCase {
 	}
 
 	// test helper functions --------------------------------------------------
-	
-	private Card find(Long id) {
-		Card found;
-		try {
-			found = (Card) em.createQuery("FROM Card c WHERE c.id = :id")
-        		.setParameter("id", id).getSingleResult();
-		} catch(NoResultException e) {
-			return null;
-		}
-        return found;
-	}
-	
+
 	private void insertCard(Card card) {
 		em.persist(card);
 		em.flush();
@@ -103,11 +91,11 @@ public class CardDaoTest extends TestCase {
 	public void testCreate() {
 		Card card = setUpCardObject();
 
-
 		cardDao.create(card);
 
-        Card expected = find(card.getId());
-        assertNotNull(expected);
+		Card expected = (Card) em.createQuery("FROM Card c WHERE c.id = :id")
+				.setParameter("id", card.getId()).getSingleResult();
+		assertNotNull(expected);
 		assertEquals(card, expected);
 	}
 
@@ -119,30 +107,35 @@ public class CardDaoTest extends TestCase {
 		assertEquals(card, actual);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testDelete() {
 		Card card = setUpCardObject();
 		insertCard(card);
 		cardDao.delete(card.getId(), Card.class);
-        Card actual = find(card.getId());
-		assertEquals(actual, null);
+		List<Card> foundCards = em.createQuery("FROM Card").getResultList();
+		for(Card found : foundCards) {
+			assert(found.getId() != card.getId());
+		}
 	}
 
 	@Test
 	public void testUpdate() {
 		int original = 3;
-		int updated  = 2;
+		int updated = 2;
 
 		Card card = setUpCardObject();
 
 		card.setPermissionLevel(original);
 		insertCard(card);
-		Card actual = find(card.getId());
+		Card actual = (Card) em.createQuery("FROM Card c WHERE c.id = :id")
+				.setParameter("id", card.getId()).getSingleResult();
 		assertEquals(actual, card);
 
 		card.setPermissionLevel(updated);
 		cardDao.update(card);
-        actual = find(card.getId());
+		actual = (Card) em.createQuery("FROM Card c WHERE c.id = :id")
+				.setParameter("id", card.getId()).getSingleResult();
 		assertEquals(actual, card);
 	}
 
@@ -150,7 +143,7 @@ public class CardDaoTest extends TestCase {
 	@SuppressWarnings("unchecked")
 	public void testFindAll() {
 		int amount = 10;
-		for(int i = 0; i < amount; i++) {
+		for (int i = 0; i < amount; i++) {
 			insertCard(setUpCardObject());
 		}
 
