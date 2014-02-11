@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
 
@@ -74,6 +75,8 @@ public class CardDaoTest extends TestCase {
 		card.setExpiration(new Date());
 		return card;
 	}
+	
+	// actual tests -----------------------------------------------------------
 
 	@Test
 	public void testCreate() {
@@ -82,9 +85,9 @@ public class CardDaoTest extends TestCase {
 
 		cardDao.create(card);
 
-        Card expected = (Card) em.createQuery("FROM Card c WHERE c.id = :id").setParameter("id", card.getId()).getSingleResult();
+        Card expected = findCardById(card.getId());
         assertNotNull(expected);
-		assertEquals(card.getId(), expected.getId());
+		assertEquals(card, expected);
 	}
 
 	@Test
@@ -92,7 +95,7 @@ public class CardDaoTest extends TestCase {
 		Card card = setUpCardObject();
 		insertCard(card);
 		Card actual = cardDao.findById(card.getId(), Card.class);
-		assertEquals(card.getId(), actual.getId());
+		assertEquals(card, actual);
 	}
 
 	@Test
@@ -100,7 +103,8 @@ public class CardDaoTest extends TestCase {
 		Card card = setUpCardObject();
 		insertCard(card);
 		cardDao.delete(card.getId(), Card.class);
-		assertEquals(cardDao.findById(card.getId(), Card.class), null);
+        Card actual = findCardById(card.getId());
+		assertEquals(actual, null);
 	}
 
 	@Test
@@ -110,7 +114,8 @@ public class CardDaoTest extends TestCase {
 		insertCard(card);
 		card.setPermissionLevel(2);
 		cardDao.update(card);
-		assertEquals(cardDao.findById(card.getId(), Card.class).getPermissionLevel(), card.getPermissionLevel());
+        Card actual = findCardById(card.getId());
+		assertEquals(actual, card);
 	}
 
 	@Test
@@ -119,6 +124,17 @@ public class CardDaoTest extends TestCase {
 		List<Card> actual = cardDao.findAll(Card.class);
 		List<Card> expected = em.createQuery("FROM Card").getResultList();
 		assertEquals(expected.size(), actual.size());
+	}
+	
+	private Card findCardById(Long id) {
+		Card found;
+		try {
+			found = (Card) em.createQuery("FROM Card c WHERE c.id = :id")
+        		.setParameter("id", id).getSingleResult();
+		} catch(NoResultException e) {
+			return null;
+		}
+        return found;
 	}
 	
 	private void insertCard(Card card) {

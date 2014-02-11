@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
 
@@ -84,7 +85,7 @@ public class UserDaoTest extends TestCase {
 
 		userDao.create(user);
 
-		User expected = (User) em.createQuery("FROM User u WHERE u.id = :id").setParameter("id", user.getId()).getSingleResult();
+		User expected = findUserById(user.getId());
 		assertNotNull(expected);
 		assertEquals(user, expected);
 	}
@@ -102,7 +103,8 @@ public class UserDaoTest extends TestCase {
 		User user = setUpUserObject();
 		insertUser(user);
 		userDao.delete(user.getId(), User.class);
-		assertEquals(userDao.findById(user.getId(), User.class), null);
+		User actual = findUserById(user.getId());
+		assertEquals(actual, null);
 	}
 
 	@Test
@@ -112,7 +114,8 @@ public class UserDaoTest extends TestCase {
 		insertUser(user);
 		user.setName("Modified Name");
 		userDao.update(user);
-		assertEquals(userDao.findById(user.getId(), User.class).getName(), user.getName());
+		User actual = findUserById(user.getId());
+		assertEquals(actual, user);
 	}
 
 	@Test
@@ -121,6 +124,16 @@ public class UserDaoTest extends TestCase {
 		List<User> actual = userDao.findAll(User.class);
 		List<User> expected = em.createQuery("FROM User").getResultList();
 		assertEquals(expected.size(), actual.size());
+	}
+	
+	private User findUserById(Long id) {
+		User found;
+		try {
+			found = (User) em.createQuery("FROM User u WHERE u.id = :id").setParameter("id", id).getSingleResult();
+		} catch(NoResultException e) {
+			return null;
+		}
+		return found;
 	}
 	
 	private void insertUser(User user) {

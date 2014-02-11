@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
 
@@ -81,9 +82,9 @@ public class DoorDaoTest extends TestCase {
 		Door door = setUpDoorObject();
 
 		doorDao.create(door);
-        Door expected = (Door) em.createQuery("FROM Door d WHERE d.id = :id").setParameter("id", door.getId()).getSingleResult();
+		Door expected = doorDao.findById(door.getId(), Door.class);
         assertNotNull(expected);
-		assertEquals(door.getId(), expected.getId());
+		assertEquals(door, expected);
 	}
 
 	@Test
@@ -91,7 +92,7 @@ public class DoorDaoTest extends TestCase {
 		Door door = setUpDoorObject();
 		insertDoor(door);
 		Door actual = doorDao.findById(door.getId(), Door.class);
-		assertEquals(door.getId(), actual.getId());
+		assertEquals(door, actual);
 	}
 
 	@Test
@@ -99,7 +100,8 @@ public class DoorDaoTest extends TestCase {
 		Door door = setUpDoorObject();
 		insertDoor(door);
 		doorDao.delete(door.getId(), Door.class);
-		assertEquals(doorDao.findById(door.getId(), Door.class), null);
+		Door actual = findDoorById(door.getId());
+		assertEquals(actual, null);
 	}
 
 	@Test
@@ -109,7 +111,8 @@ public class DoorDaoTest extends TestCase {
 		insertDoor(door);
 		door.setRequiredPermission(2);
 		doorDao.update(door);
-		assertEquals(doorDao.findById(door.getId(), Door.class).getRequiredPermission(), door.getRequiredPermission());
+		Door actual = findDoorById(door.getId());
+		assertEquals(actual, door);
 	}
 
 	@Test
@@ -118,6 +121,16 @@ public class DoorDaoTest extends TestCase {
 		List<Door> actual = doorDao.findAll(Door.class);
 		List<Door> expected = em.createQuery("FROM Door").getResultList();
 		assertEquals(expected.size(), actual.size());
+	}
+	
+	private Door findDoorById(Long id) {
+		Door found;
+		try {
+			found = (Door) em.createQuery("FROM Door d WHERE d.id = :id").setParameter("id", id).getSingleResult();
+		} catch(NoResultException e) {
+			return null;
+		}
+        return found;
 	}
 	
 	private void insertDoor(Door door) {
