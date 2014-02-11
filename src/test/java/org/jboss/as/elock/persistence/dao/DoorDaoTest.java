@@ -57,6 +57,8 @@ public class DoorDaoTest extends TestCase {
 		utx.commit();
 	}
 	
+	// setup helper functions -------------------------------------------------
+	
 	private void clearData() throws Exception {
 		utx.begin();
 		em.joinTransaction();
@@ -75,6 +77,24 @@ public class DoorDaoTest extends TestCase {
 		return door;
 	}
 	
+	// test helper functions --------------------------------------------------
+
+	private Door find(Long id) {
+		Door found;
+		try {
+			found = (Door) em.createQuery("FROM Door d WHERE d.id = :id").setParameter("id", id).getSingleResult();
+		} catch(NoResultException e) {
+			return null;
+		}
+        return found;
+	}
+	
+	private void insertDoor(Door door) {
+		em.persist(door);
+		em.flush();
+		em.refresh(door);
+	}
+
 	// actual tests -----------------------------------------------------------
 
 	@Test
@@ -100,42 +120,39 @@ public class DoorDaoTest extends TestCase {
 		Door door = setUpDoorObject();
 		insertDoor(door);
 		doorDao.delete(door.getId(), Door.class);
-		Door actual = findDoorById(door.getId());
+		Door actual = find(door.getId());
 		assertEquals(actual, null);
 	}
 
 	@Test
 	public void testUpdate() {
+		int original = 3;
+		int updated = 2;
+
 		Door door = setUpDoorObject();
-		door.setRequiredPermission(3);
+
+		door.setRequiredPermission(original);
 		insertDoor(door);
-		door.setRequiredPermission(2);
+		Door actual = find(door.getId());
+		assertEquals(actual, door);
+
+		door.setRequiredPermission(updated);
 		doorDao.update(door);
-		Door actual = findDoorById(door.getId());
+		actual = find(door.getId());
 		assertEquals(actual, door);
 	}
 
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testFindAll() {
+		int amount = 10;
+		for(int i = 0; i < amount; i++) {
+			insertDoor(setUpDoorObject());
+		}
+		
 		List<Door> actual = doorDao.findAll(Door.class);
 		List<Door> expected = em.createQuery("FROM Door").getResultList();
+		assertEquals(expected.size(), amount);
 		assertEquals(expected.size(), actual.size());
-	}
-	
-	private Door findDoorById(Long id) {
-		Door found;
-		try {
-			found = (Door) em.createQuery("FROM Door d WHERE d.id = :id").setParameter("id", id).getSingleResult();
-		} catch(NoResultException e) {
-			return null;
-		}
-        return found;
-	}
-	
-	private void insertDoor(Door door) {
-		em.persist(door);
-		em.flush();
-		em.refresh(door);
 	}
 }

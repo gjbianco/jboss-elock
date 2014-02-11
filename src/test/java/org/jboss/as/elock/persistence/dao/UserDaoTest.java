@@ -58,6 +58,8 @@ public class UserDaoTest extends TestCase {
 		utx.commit();
 	}
 	
+	// setup helper functions -------------------------------------------------
+	
 	private void clearData() throws Exception {
 		utx.begin();
 		em.joinTransaction();
@@ -77,6 +79,24 @@ public class UserDaoTest extends TestCase {
 		return testUser;
 	}
 	
+	// test helper functions --------------------------------------------------
+
+    private User find(Long id) {
+		User found;
+		try {
+			found = (User) em.createQuery("FROM User u WHERE u.id = :id").setParameter("id", id).getSingleResult();
+		} catch(NoResultException e) {
+			return null;
+		}
+		return found;
+	}
+	
+	private void insertUser(User user) {
+		em.persist(user);
+		em.flush();
+		em.refresh(user);
+	}
+
 	// actual tests -----------------------------------------------------------
 
 	@Test
@@ -85,7 +105,7 @@ public class UserDaoTest extends TestCase {
 
 		userDao.create(user);
 
-		User expected = findUserById(user.getId());
+		User expected = find(user.getId());
 		assertNotNull(expected);
 		assertEquals(user, expected);
 	}
@@ -103,42 +123,39 @@ public class UserDaoTest extends TestCase {
 		User user = setUpUserObject();
 		insertUser(user);
 		userDao.delete(user.getId(), User.class);
-		User actual = findUserById(user.getId());
+		User actual = find(user.getId());
 		assertEquals(actual, null);
 	}
 
 	@Test
 	public void testUpdate() {
+		String original = "Original Name";
+		String updated  = "Updated Name";
+
 		User user = setUpUserObject();
-		user.setName("Original Name");
+
+		user.setName(original);
 		insertUser(user);
-		user.setName("Modified Name");
+		User actual = find(user.getId());
+		assertEquals(actual, user);
+
+		user.setName(updated);
 		userDao.update(user);
-		User actual = findUserById(user.getId());
+		actual = find(user.getId());
 		assertEquals(actual, user);
 	}
 
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testFindAll() {
+		int amount = 10;
+		for(int i = 0; i < amount; i++) {
+			insertUser(setUpUserObject());
+		}
+
 		List<User> actual = userDao.findAll(User.class);
 		List<User> expected = em.createQuery("FROM User").getResultList();
+		assertEquals(expected.size(), amount);
 		assertEquals(expected.size(), actual.size());
-	}
-	
-	private User findUserById(Long id) {
-		User found;
-		try {
-			found = (User) em.createQuery("FROM User u WHERE u.id = :id").setParameter("id", id).getSingleResult();
-		} catch(NoResultException e) {
-			return null;
-		}
-		return found;
-	}
-	
-	private void insertUser(User user) {
-		em.persist(user);
-		em.flush();
-		em.refresh(user);
 	}
 }

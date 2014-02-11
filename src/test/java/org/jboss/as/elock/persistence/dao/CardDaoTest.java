@@ -58,6 +58,8 @@ public class CardDaoTest extends TestCase {
 		utx.commit();
 	}
 	
+	// setup helper functions -------------------------------------------------
+	
 	private void clearData() throws Exception {
 		utx.begin();
 		em.joinTransaction();
@@ -75,7 +77,26 @@ public class CardDaoTest extends TestCase {
 		card.setExpiration(new Date());
 		return card;
 	}
+
+	// test helper functions --------------------------------------------------
 	
+	private Card find(Long id) {
+		Card found;
+		try {
+			found = (Card) em.createQuery("FROM Card c WHERE c.id = :id")
+        		.setParameter("id", id).getSingleResult();
+		} catch(NoResultException e) {
+			return null;
+		}
+        return found;
+	}
+	
+	private void insertCard(Card card) {
+		em.persist(card);
+		em.flush();
+		em.refresh(card);
+	}
+
 	// actual tests -----------------------------------------------------------
 
 	@Test
@@ -85,7 +106,7 @@ public class CardDaoTest extends TestCase {
 
 		cardDao.create(card);
 
-        Card expected = findCardById(card.getId());
+        Card expected = find(card.getId());
         assertNotNull(expected);
 		assertEquals(card, expected);
 	}
@@ -103,43 +124,39 @@ public class CardDaoTest extends TestCase {
 		Card card = setUpCardObject();
 		insertCard(card);
 		cardDao.delete(card.getId(), Card.class);
-        Card actual = findCardById(card.getId());
+        Card actual = find(card.getId());
 		assertEquals(actual, null);
 	}
 
 	@Test
 	public void testUpdate() {
+		int original = 3;
+		int updated  = 2;
+
 		Card card = setUpCardObject();
-		card.setPermissionLevel(3);
+
+		card.setPermissionLevel(original);
 		insertCard(card);
-		card.setPermissionLevel(2);
+		Card actual = find(card.getId());
+		assertEquals(actual, card);
+
+		card.setPermissionLevel(updated);
 		cardDao.update(card);
-        Card actual = findCardById(card.getId());
+        actual = find(card.getId());
 		assertEquals(actual, card);
 	}
 
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testFindAll() {
+		int amount = 10;
+		for(int i = 0; i < amount; i++) {
+			insertCard(setUpCardObject());
+		}
+
 		List<Card> actual = cardDao.findAll(Card.class);
 		List<Card> expected = em.createQuery("FROM Card").getResultList();
+		assertEquals(expected.size(), amount);
 		assertEquals(expected.size(), actual.size());
-	}
-	
-	private Card findCardById(Long id) {
-		Card found;
-		try {
-			found = (Card) em.createQuery("FROM Card c WHERE c.id = :id")
-        		.setParameter("id", id).getSingleResult();
-		} catch(NoResultException e) {
-			return null;
-		}
-        return found;
-	}
-	
-	private void insertCard(Card card) {
-		em.persist(card);
-		em.flush();
-		em.refresh(card);
 	}
 }
