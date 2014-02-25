@@ -1,4 +1,4 @@
-package org.jboss.as.elock.persistence.dao;
+package org.jboss.as.elock.persistence.dao.card;
 
 import java.util.List;
 
@@ -6,12 +6,12 @@ import javax.persistence.Query;
 
 import org.jboss.as.elock.model.Card;
 import org.jboss.as.elock.model.User;
+import org.jboss.as.elock.persistence.dao.AbstractDao;
 
-public class UserDao extends AbstractDao<User> {
+public class CardDao extends AbstractDao<Card> {
 
-	@SuppressWarnings("unchecked")
 	public List<Card> findCardsByUser(User user) {
-		if(user == null)
+		if (user == null)
 			return null;
 
 		String hql = "SELECT card FROM User as user " + "JOIN user.cardXUsers AS cardXUser "
@@ -20,8 +20,5 @@ public class UserDao extends AbstractDao<User> {
 		query.setParameter("user", user);
 		return (List<Card>) query.getResultList();
 	}
-	
-	public User findUserById(Long id) {
-		return (User) entityManager.createNamedQuery("findUserById").setParameter("id", id).getSingleResult();
-	}
+
 }

@@ -14,6 +14,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.as.elock.model.Card;
 import org.jboss.as.elock.model.Door;
 import org.jboss.as.elock.model.User;
+import org.jboss.as.elock.persistence.dao.door.DoorDao;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
