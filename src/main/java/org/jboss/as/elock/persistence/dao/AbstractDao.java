@@ -9,6 +9,7 @@ import javax.persistence.Query;
 public abstract class AbstractDao<T> implements Dao<T> {
 	
 	@PersistenceContext(unitName = "primary")
+	protected
 	EntityManager entityManager;
 
 	@Override
